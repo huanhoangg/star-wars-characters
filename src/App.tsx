@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { Table } from "antd";
 import { client } from "./index";
-import { StarFilled } from "@ant-design/icons";
+import { StarFilled, StarOutlined } from "@ant-design/icons";
 
 const ALL_CHARACTERS = gql`
   query AllPeople($first: Int, $last: Int, $after: String, $before: String) {
@@ -44,6 +44,10 @@ function App() {
   const [currentPageBeforePagination, setCurrentPageBeforePagination] =
     useState(1);
 
+  const [favoriteCharacters, setFavoriteCharacters] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const { loading, error, data, fetchMore } = useQuery(ALL_CHARACTERS, {
     variables: {
       first: PAGE_SIZE,
@@ -67,6 +71,13 @@ function App() {
     }
   }, [data]);
 
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favoriteCharacters");
+    if (storedFavorites) {
+      setFavoriteCharacters(JSON.parse(storedFavorites));
+    }
+  }, []);
+
   // Update current page number before pagination change
   useEffect(() => {
     setCurrentPageBeforePagination(pagination.current);
@@ -77,8 +88,6 @@ function App() {
     filters: any,
     sorter: any
   ) => {
-    // console.log("Original: ", currentPageBeforePagination);
-    // console.log("Pagination to: ", pagination.current);
     const after =
       pagination.current > currentPageBeforePagination
         ? data?.allPeople?.pageInfo?.endCursor
@@ -128,12 +137,37 @@ function App() {
     return value !== null && value !== undefined ? value : "-";
   };
 
+  const toggleFavorite = (id: string) => {
+    setFavoriteCharacters((prev) => {
+      const updatedFavorites = {
+        ...prev,
+        [id]: !prev[id],
+      };
+      localStorage.setItem(
+        "favoriteCharacters",
+        JSON.stringify(updatedFavorites)
+      );
+      return updatedFavorites;
+    });
+  };
+
   const columns = [
     {
       title: "Favorite",
-      dataIndex: "favorite",
+      dataIndex: "id",
       key: "favorite",
-      render: () => <StarFilled style={{ color: "gold" }} />, // Render star icon
+      render: (id: string) =>
+        favoriteCharacters[id] ? (
+          <StarFilled
+            style={{ color: "gold", cursor: "pointer" }}
+            onClick={() => toggleFavorite(id)}
+          />
+        ) : (
+          <StarOutlined
+            style={{ color: "black", cursor: "pointer" }}
+            onClick={() => toggleFavorite(id)}
+          />
+        ),
     },
     {
       title: "Name",
