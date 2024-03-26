@@ -1,0 +1,15 @@
+.ant-pagination-item {
+  display: none !important;
+}
+
+.ant-pagination-jump-next {
+  display: none !important;
+}
+
+.ant-pagination-item-active {
+  display: inline !important;
+}
+
+.ant-pagination-jump-prev {
+  display: none !important;
+}
