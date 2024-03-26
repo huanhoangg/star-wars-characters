@@ -1,0 +1,40 @@
+type Species {
+  name: String
+}
+
+type Planet {
+  name: String
+}
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type AllPeopleResponse {
+  pageInfo: PageInfo!
+  totalCount: Int
+  people: [Person]
+}
+
+type Person {
+  name: String
+  height: String
+  mass: String
+  species: Species
+  gender: String
+  eyeColor: String
+  homeworld: Planet
+  id: ID!
+}
+
+type Query {
+  allPeople(
+    first: Int
+    last: Int
+    after: String
+    before: String
+  ): AllPeopleResponse
+}
