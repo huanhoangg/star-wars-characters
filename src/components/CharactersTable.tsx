@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { Table } from "antd";
 import { client } from "../index";
 import { StarFilled, StarOutlined } from "@ant-design/icons";
 import { Query } from "../gql/graphql";
+import useFavoriteCharacters from "./useFavoriteCharacters";
 
 const ALL_CHARACTERS = gql`
   query AllPeople($first: Int, $last: Int, $after: String, $before: String) {
@@ -45,9 +46,7 @@ function CharactersTable() {
   const [currentPageBeforePagination, setCurrentPageBeforePagination] =
     useState(1);
 
-  const [favoriteCharacters, setFavoriteCharacters] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const { favoriteCharacters, toggleFavorite } = useFavoriteCharacters();
 
   const { loading, error, data, fetchMore } = useQuery<Query>(ALL_CHARACTERS, {
     variables: {
@@ -73,16 +72,8 @@ function CharactersTable() {
   }, [data]);
 
   useEffect(() => {
-    const storedFavorites = localStorage.getItem("favoriteCharacters");
-    if (storedFavorites) {
-      setFavoriteCharacters(JSON.parse(storedFavorites));
-    }
-  }, []);
-
-  // Update current page number before pagination change
-  useEffect(() => {
     setCurrentPageBeforePagination(pagination.current);
-  }, [pagination]);
+  }, [currentPageBeforePagination, pagination]);
 
   const handleTableChange = async (
     pagination: any,
@@ -93,13 +84,11 @@ function CharactersTable() {
       pagination.current > currentPageBeforePagination
         ? data?.allPeople?.pageInfo?.endCursor
         : null;
-    console.log("Forward cursor: ", after);
 
     const before =
       pagination.current < currentPageBeforePagination
         ? data?.allPeople?.pageInfo?.startCursor
         : null;
-    console.log("Backward cursor: ", before);
 
     const first =
       pagination.current > currentPageBeforePagination ? PAGE_SIZE : null;
@@ -115,7 +104,6 @@ function CharactersTable() {
         before: before,
       },
       updateQuery: (prev: any, { fetchMoreResult }: any) => {
-        console.log(fetchMoreResult);
         if (!fetchMoreResult) return prev;
         return {
           allPeople: {
@@ -131,25 +119,10 @@ function CharactersTable() {
       ...prevPagination,
       current: pagination.current,
     }));
-    console.log("---");
   };
 
   const renderValue = (value: any) => {
     return value !== null && value !== undefined ? value : "-";
-  };
-
-  const toggleFavorite = (id: string) => {
-    setFavoriteCharacters((prev) => {
-      const updatedFavorites = {
-        ...prev,
-        [id]: !prev[id],
-      };
-      localStorage.setItem(
-        "favoriteCharacters",
-        JSON.stringify(updatedFavorites)
-      );
-      return updatedFavorites;
-    });
   };
 
   const columns = [
