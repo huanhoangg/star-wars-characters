@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import generateColumns from "./columns";
 import { useQuery } from "@apollo/client";
-import { Table } from "antd";
+import { Table, Button } from "antd";
+import { StarFilled, StarOutlined } from "@ant-design/icons";
 import { client } from "../index";
 import { Query } from "../gql/graphql";
 import useFavoriteCharacters from "./useFavoriteCharacters";
@@ -21,6 +22,7 @@ function CharactersTable() {
 
   const { favoriteCharacters, toggleFavorite } = useFavoriteCharacters();
   const [isFiltered, setIsFiltered] = useState(false);
+  const [isInFavoriteMode, setIsInFavoriteMode] = useState(false);
 
   const { loading, error, data, fetchMore } = useQuery<Query>(ALL_CHARACTERS, {
     variables: {
@@ -33,35 +35,31 @@ function CharactersTable() {
     client: client,
   });
 
-  // If comment this out -> table only has 1 page because we need the total to know how many pages there are in total
-  // bc pagination is set total = 0 before the table was create --> update total count when
-  // total param is important for table in ant design to be displayed correctly
   useEffect(() => {
     if (data?.allPeople?.totalCount) {
       setPagination((prevPagination) => ({
         ...prevPagination,
-        total: data?.allPeople?.totalCount || 0,
+        total: isInFavoriteMode
+          ? favoriteCharacters.length
+          : data?.allPeople?.totalCount || 0,
       }));
     }
-  }, [data]);
+  }, [data, isInFavoriteMode, favoriteCharacters]);
 
   useEffect(() => {
     setCurrentPageBeforePagination(pagination.current);
   }, [currentPageBeforePagination, pagination]);
 
-  // Try to eliminate all type any later
   const handleTableChange = async (pagination: any, filters: any) => {
     const isAnyFilterActive = Object.values(filters).some(
       (filterValue) => filterValue !== null && filterValue !== undefined
     );
 
-    // When filter is (first) applied, do not fetch data
     if (isAnyFilterActive) {
       if (!isFiltered) setIsFiltered(true);
       return;
     }
 
-    // Do not fetch more data after removing/resetting all filters
     if (isFiltered && !isAnyFilterActive) {
       setIsFiltered(false);
       return;
@@ -95,7 +93,6 @@ function CharactersTable() {
         if (!fetchMoreResult) return prev;
         return {
           allPeople: {
-            // xem screenshot tai sao phai spread cai data
             ...fetchMoreResult.allPeople,
             people: fetchMoreResult.allPeople.people,
           },
@@ -112,22 +109,41 @@ function CharactersTable() {
   if (error) return <p>Whoops... Something is wrong!</p>;
 
   return (
-    <Table
-      dataSource={
-        data?.allPeople?.people
-          ? data.allPeople.people.map((person) => ({
-              ...person,
-              favoriteCharacters,
-              toggleFavorite,
-            })) // Convert Maybe<Person>[] to AnyObject[], or else there are some errors
-          : []
-      }
-      columns={generateColumns(data)}
-      pagination={pagination}
-      onChange={handleTableChange}
-      loading={loading}
-      rowKey="id"
-    />
+    <>
+      <Button
+        type={isInFavoriteMode ? "primary" : "default"}
+        onClick={() => setIsInFavoriteMode((prev) => !prev)}
+        icon={isInFavoriteMode ? <StarFilled /> : <StarOutlined />}
+        style={{
+          backgroundColor: isInFavoriteMode ? "yellow" : "black",
+          color: isInFavoriteMode ? "black" : "yellow",
+        }}
+      >
+        {isInFavoriteMode ? "Show All Characters" : "Favorites Only"}
+      </Button>
+      <Table
+        dataSource={
+          isInFavoriteMode
+            ? favoriteCharacters.map((char) => ({
+                ...char,
+                favoriteCharacters,
+                toggleFavorite,
+              }))
+            : data?.allPeople?.people
+            ? data.allPeople.people.map((person) => ({
+                ...person,
+                favoriteCharacters,
+                toggleFavorite,
+              }))
+            : []
+        }
+        columns={generateColumns(data)}
+        pagination={pagination}
+        onChange={handleTableChange}
+        loading={loading}
+        rowKey="id"
+      />
+    </>
   );
 }
 
