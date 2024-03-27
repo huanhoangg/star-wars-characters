@@ -23,6 +23,11 @@ export const ALL_CHARACTERS = gql`
           name
         }
         id
+        filmConnection {
+          films {
+            title
+          }
+        }
       }
     }
   }

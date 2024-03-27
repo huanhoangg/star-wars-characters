@@ -6,6 +6,14 @@ type Planet {
   name: String
 }
 
+type PersonFilmsConnection {
+  films: [Film]
+}
+
+type Film {
+  title: String
+}
+
 type PageInfo {
   startCursor: String
   endCursor: String
@@ -28,6 +36,7 @@ type Person {
   eyeColor: String
   homeworld: Planet
   id: ID!
+  filmConnection: PersonFilmsConnection
 }
 
 type Query {
