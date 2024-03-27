@@ -1,38 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Table } from "antd";
 import { client } from "../index";
 import { Query } from "../gql/graphql";
 import useFavoriteCharacters from "./useFavoriteCharacters";
 import columns from "./columns";
-
-const ALL_CHARACTERS = gql`
-  query AllPeople($first: Int, $last: Int, $after: String, $before: String) {
-    allPeople(first: $first, last: $last, after: $after, before: $before) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
-      }
-      totalCount
-      people {
-        name
-        height
-        mass
-        species {
-          name
-        }
-        gender
-        eyeColor
-        homeworld {
-          name
-        }
-        id
-      }
-    }
-  }
-`;
+import { ALL_CHARACTERS } from "./quieries";
 
 const PAGE_SIZE = 10;
 
