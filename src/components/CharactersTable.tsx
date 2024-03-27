@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import generateColumns from "./columns";
 import { useQuery } from "@apollo/client";
 import { Table } from "antd";
 import { client } from "../index";
 import { Query } from "../gql/graphql";
 import useFavoriteCharacters from "./useFavoriteCharacters";
-import columns from "./columns";
 import { ALL_CHARACTERS } from "../graphql/queries";
 
 const PAGE_SIZE = 10;
@@ -20,6 +20,7 @@ function CharactersTable() {
     useState(1);
 
   const { favoriteCharacters, toggleFavorite } = useFavoriteCharacters();
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const { loading, error, data, fetchMore } = useQuery<Query>(ALL_CHARACTERS, {
     variables: {
@@ -49,11 +50,23 @@ function CharactersTable() {
   }, [currentPageBeforePagination, pagination]);
 
   // Try to eliminate all type any later
-  const handleTableChange = async (
-    pagination: any,
-    filters: any,
-    sorter: any
-  ) => {
+  const handleTableChange = async (pagination: any, filters: any) => {
+    const isAnyFilterActive = Object.values(filters).some(
+      (filterValue) => filterValue !== null && filterValue !== undefined
+    );
+
+    // When filter is (first) applied, do not fetch data
+    if (isAnyFilterActive) {
+      if (!isFiltered) setIsFiltered(true);
+      return;
+    }
+
+    // Do not fetch more data after removing/resetting all filters
+    if (isFiltered && !isAnyFilterActive) {
+      setIsFiltered(false);
+      return;
+    }
+
     const after =
       pagination.current > currentPageBeforePagination
         ? data?.allPeople?.pageInfo?.endCursor
@@ -78,6 +91,7 @@ function CharactersTable() {
         before: before,
       },
       updateQuery: (prev: any, { fetchMoreResult }: any) => {
+        console.log(fetchMoreResult);
         if (!fetchMoreResult) return prev;
         return {
           allPeople: {
@@ -108,7 +122,7 @@ function CharactersTable() {
             })) // Convert Maybe<Person>[] to AnyObject[], or else there are some errors
           : []
       }
-      columns={columns}
+      columns={generateColumns(data)}
       pagination={pagination}
       onChange={handleTableChange}
       loading={loading}
