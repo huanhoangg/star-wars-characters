@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { Table } from "antd";
 import { client } from "../index";
-import { StarFilled, StarOutlined } from "@ant-design/icons";
 import { Query } from "../gql/graphql";
 import useFavoriteCharacters from "./useFavoriteCharacters";
+import columns from "./columns";
 
 const ALL_CHARACTERS = gql`
   query AllPeople($first: Int, $last: Int, $after: String, $before: String) {
@@ -121,72 +121,6 @@ function CharactersTable() {
     }));
   };
 
-  const renderValue = (value: any) => {
-    return value !== null && value !== undefined ? value : "-";
-  };
-
-  const columns = [
-    {
-      title: "Favorite",
-      dataIndex: "id",
-      key: "favorite",
-      render: (id: string) =>
-        favoriteCharacters[id] ? (
-          <StarFilled
-            style={{ color: "gold", cursor: "pointer" }}
-            onClick={() => toggleFavorite(id)}
-          />
-        ) : (
-          <StarOutlined
-            style={{ color: "black", cursor: "pointer" }}
-            onClick={() => toggleFavorite(id)}
-          />
-        ),
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text: string) => renderValue(text),
-    },
-    {
-      title: "Species",
-      dataIndex: "species",
-      key: "species",
-      render: (species: any) => renderValue(species?.name),
-    },
-    {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
-      render: (text: string) => renderValue(text),
-    },
-    {
-      title: "Height (cm)",
-      dataIndex: "height",
-      key: "height",
-      render: (text: number) => renderValue(text),
-    },
-    {
-      title: "Weight (kg)",
-      dataIndex: "mass",
-      key: "mass",
-      render: (text: number) => renderValue(text),
-    },
-    {
-      title: "Eye color",
-      dataIndex: "eyeColor",
-      key: "eyeColor",
-      render: (text: string) => renderValue(text),
-    },
-    {
-      title: "Home planet",
-      dataIndex: "homeworld",
-      key: "homeworld",
-      render: (homeworld: any) => renderValue(homeworld?.name),
-    },
-  ];
-
   if (error) return <p>Whoops... Something is wrong!</p>;
 
   return (
@@ -195,6 +129,8 @@ function CharactersTable() {
         data?.allPeople?.people
           ? data.allPeople.people.map((person) => ({
               ...person,
+              favoriteCharacters,
+              toggleFavorite,
             })) // Convert Maybe<Person>[] to AnyObject[], or else there are some errors
           : []
       }
