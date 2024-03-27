@@ -53,8 +53,6 @@ const CharactersTable = () => {
   const [fetchMovies, { loading: movieLoading, data: movieData }] =
     useLazyQuery<Query>(CHARACTER_MOVIES);
 
-  const [movies, setMovies] = useState<string[]>([]);
-
   const { loading, error, data, fetchMore } = useQuery<Query>(ALL_CHARACTERS, {
     variables: {
       first: PAGE_SIZE,
@@ -255,13 +253,12 @@ const CharactersTable = () => {
   const handleNameClick = async (record: any) => {
     setSelectedCharacter(record);
     setModalVisible(true);
-    fetchMovies({ variables: { id: record.id } });
+    fetchMovies({ variables: { personId: record.id } });
   };
 
   const handleCloseModal = () => {
     setSelectedCharacter(null);
     setModalVisible(false);
-    setMovies([]); // Reset movies when closing the modal
   };
 
   if (error) return <p>Whoops... Something is wrong!</p>;
