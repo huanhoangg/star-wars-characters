@@ -46,4 +46,6 @@ type Query {
     after: String
     before: String
   ): AllPeopleResponse
+
+  person(id: ID): Person
 }

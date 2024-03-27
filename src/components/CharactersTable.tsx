@@ -51,7 +51,8 @@ const CharactersTable = () => {
   );
 
   const [fetchMovies, { loading: movieLoading, data: movieData }] =
-    useLazyQuery(CHARACTER_MOVIES);
+    useLazyQuery<Query>(CHARACTER_MOVIES);
+
   const [movies, setMovies] = useState<string[]>([]);
 
   const { loading, error, data, fetchMore } = useQuery<Query>(ALL_CHARACTERS, {
@@ -331,7 +332,7 @@ const CharactersTable = () => {
               <>
                 <p>Movies:</p>
                 <ul>
-                  {movieData.person.filmConnection.films.map((film: any) => (
+                  {movieData.person.filmConnection!.films!.map((film: any) => (
                     <li key={film.title}>{film.title}</li>
                   ))}
                 </ul>

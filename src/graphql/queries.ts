@@ -23,19 +23,14 @@ export const ALL_CHARACTERS = gql`
           name
         }
         id
-        filmConnection {
-          films {
-            title
-          }
-        }
       }
     }
   }
 `;
 
 export const CHARACTER_MOVIES = gql`
-  query CharacterMovies($id: ID!) {
-    person(id: $id) {
+  query CharacterMovies($personId: ID) {
+    person(id: $personId) {
       filmConnection {
         films {
           title
