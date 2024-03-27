@@ -10,18 +10,22 @@ function generateColumns(data: any) {
       title: "Favorite",
       dataIndex: "id",
       key: "favorite",
-      render: (id: string, record: any) =>
-        record.favoriteCharacters[id] ? (
+      render: (id: string, record: any) => {
+        const isFavorite = record.favoriteCharacters.some(
+          (char: any) => char.id === id
+        );
+        return isFavorite ? (
           <StarFilled
             style={{ color: "gold", cursor: "pointer" }}
-            onClick={() => record.toggleFavorite(id)}
+            onClick={() => record.toggleFavorite(record)}
           />
         ) : (
           <StarOutlined
             style={{ color: "black", cursor: "pointer" }}
-            onClick={() => record.toggleFavorite(id)}
+            onClick={() => record.toggleFavorite(record)}
           />
-        ),
+        );
+      },
     },
     {
       title: "Name",

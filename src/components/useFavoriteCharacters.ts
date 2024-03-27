@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 
 function useFavoriteCharacters() {
-  const [favoriteCharacters, setFavoriteCharacters] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [favoriteCharacters, setFavoriteCharacters] = useState<any[]>([]);
 
   useEffect(() => {
     const storedFavorites = localStorage.getItem("favoriteCharacters");
@@ -12,21 +10,23 @@ function useFavoriteCharacters() {
     }
   }, []);
 
-  const toggleFavorite = (id: string) => {
-    setFavoriteCharacters((prev) => {
-      const updatedFavorites = {
-        ...prev,
-        [id]: !prev[id],
-      };
-      localStorage.setItem(
-        "favoriteCharacters",
-        JSON.stringify(updatedFavorites)
-      );
-      return updatedFavorites;
-    });
+  const toggleFavorite = (record: any) => {
+    const isFavorite = favoriteCharacters.some((char) => char.id === record.id);
+    const updatedFavorites = isFavorite
+      ? favoriteCharacters.filter((char) => char.id !== record.id)
+      : [...favoriteCharacters, record];
+    setFavoriteCharacters(updatedFavorites);
+    localStorage.setItem(
+      "favoriteCharacters",
+      JSON.stringify(updatedFavorites)
+    );
   };
 
-  return { favoriteCharacters, toggleFavorite };
+  const removeAllFavorites = () => {
+    setFavoriteCharacters([]);
+  };
+
+  return { favoriteCharacters, toggleFavorite, removeAllFavorites };
 }
 
 export default useFavoriteCharacters;

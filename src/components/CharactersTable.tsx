@@ -20,7 +20,8 @@ function CharactersTable() {
   const [currentPageBeforePagination, setCurrentPageBeforePagination] =
     useState(1);
 
-  const { favoriteCharacters, toggleFavorite } = useFavoriteCharacters();
+  const { favoriteCharacters, toggleFavorite, removeAllFavorites } =
+    useFavoriteCharacters();
   const [isFiltered, setIsFiltered] = useState(false);
   const [isInFavoriteMode, setIsInFavoriteMode] = useState(false);
 
@@ -34,6 +35,11 @@ function CharactersTable() {
     fetchPolicy: "cache-first",
     client: client,
   });
+
+  const handleRemoveAllFavorites = () => {
+    removeAllFavorites();
+    alert("All favorites removed successfully!");
+  };
 
   useEffect(() => {
     if (data?.allPeople?.totalCount) {
@@ -120,6 +126,13 @@ function CharactersTable() {
         }}
       >
         {isInFavoriteMode ? "Show All Characters" : "Favorites Only"}
+      </Button>
+      <Button
+        type="default"
+        onClick={handleRemoveAllFavorites}
+        style={{ marginLeft: 16 }}
+      >
+        Remove All Favorites
       </Button>
       <Table
         dataSource={

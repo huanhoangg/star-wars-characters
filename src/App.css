@@ -13,3 +13,10 @@
 .ant-pagination-jump-prev {
   display: none !important;
 }
+
+.ant-select-selector {
+  display: none !important;
+}
+.ant-select-arrow {
+  display: none !important;
+}
