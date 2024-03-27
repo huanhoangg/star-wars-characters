@@ -2,7 +2,7 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   schema: "src/graphql/schema.graphql", // URL or local file path to your GraphQL schema
-  documents: ["src/**/*.ts"], // Path to your GraphQL operation files
+  documents: ["src/**/*.ts", "src/**/*.tsx"], // Path to your GraphQL operation files
   generates: {
     "./src/gql/": {
       // Output directory for generated files

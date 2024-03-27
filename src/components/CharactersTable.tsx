@@ -5,7 +5,7 @@ import { client } from "../index";
 import { Query } from "../gql/graphql";
 import useFavoriteCharacters from "./useFavoriteCharacters";
 import columns from "./columns";
-import { ALL_CHARACTERS } from "./quieries";
+import { ALL_CHARACTERS } from "../graphql/queries";
 
 const PAGE_SIZE = 10;
 
@@ -48,6 +48,7 @@ function CharactersTable() {
     setCurrentPageBeforePagination(pagination.current);
   }, [currentPageBeforePagination, pagination]);
 
+  // Try to eliminate all type any later
   const handleTableChange = async (
     pagination: any,
     filters: any,
