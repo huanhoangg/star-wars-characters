@@ -29,8 +29,8 @@ type AllPeopleResponse {
 
 type Person {
   name: String
-  height: String
-  mass: String
+  height: Int
+  mass: Float
   species: Species
   gender: String
   eyeColor: String

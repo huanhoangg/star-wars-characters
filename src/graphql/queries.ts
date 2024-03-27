@@ -32,3 +32,15 @@ export const ALL_CHARACTERS = gql`
     }
   }
 `;
+
+export const CHARACTER_MOVIES = gql`
+  query CharacterMovies($id: ID!) {
+    person(id: $id) {
+      filmConnection {
+        films {
+          title
+        }
+      }
+    }
+  }
+`;
