@@ -1,13 +1,26 @@
-import React from "react";
-import { Modal, Button } from "antd";
+import React, { ReactElement } from "react";
+import { Modal, Button, Table } from "antd";
 import { renderValue } from "./generateColumns";
 
 interface Props {
   open: boolean;
-  character: Character;
+  character: Character | null;
   movieData: Movie;
   onClose: () => void;
 }
+
+const columns = [
+  {
+    title: "Attribute",
+    dataIndex: "attribute",
+    key: "attribute",
+  },
+  {
+    title: "Value",
+    dataIndex: "value",
+    key: "value",
+  },
+];
 
 const CharacterModal: React.FC<Props> = ({
   open,
@@ -15,6 +28,42 @@ const CharacterModal: React.FC<Props> = ({
   movieData,
   onClose,
 }) => {
+  let dataSource: {
+    attribute: string;
+    value: string | number | ReactElement;
+  }[] = [];
+  if (character) {
+    dataSource = [
+      { attribute: "Name", value: renderValue(character.name) },
+      { attribute: "Species", value: renderValue(character.species?.name) },
+      { attribute: "Gender", value: renderValue(character.gender) },
+      { attribute: "Height (cm)", value: renderValue(character.height) },
+      { attribute: "Weight (kg)", value: renderValue(character.mass) },
+      { attribute: "Eye color", value: renderValue(character.eyeColor) },
+      {
+        attribute: "Home planet",
+        value: renderValue(character.homeworld?.name),
+      },
+    ];
+  }
+
+  const movies = movieData?.person?.filmConnection?.films.map(
+    (film: Film) => film.title
+  );
+
+  if (movies && movies.length > 0) {
+    dataSource.push({
+      attribute: "Movies",
+      value: (
+        <ul style={{ margin: 0, paddingLeft: 12 }}>
+          {movies.map((movie: string) => (
+            <li key={movie}>{movie}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
   return (
     <Modal
       title="Character Details"
@@ -26,39 +75,7 @@ const CharacterModal: React.FC<Props> = ({
         </Button>,
       ]}
     >
-      {character && (
-        <div>
-          <p className="modal-paragraph">Name: {renderValue(character.name)}</p>
-          <p className="modal-paragraph">
-            Species: {renderValue(character.species?.name)}
-          </p>
-          <p className="modal-paragraph">
-            Gender: {renderValue(character.gender)}
-          </p>
-          <p className="modal-paragraph">
-            Height (cm): {renderValue(character.height)}
-          </p>
-          <p className="modal-paragraph">
-            Weight (kg): {renderValue(character.mass)}
-          </p>
-          <p className="modal-paragraph">
-            Eye color: {renderValue(character.eyeColor)}
-          </p>
-          <p className="modal-paragraph">
-            Home planet: {renderValue(character.homeworld?.name)}
-          </p>
-          {movieData && movieData.person && (
-            <>
-              <p className="modal-paragraph">Movies:</p>
-              <ul style={{ margin: 0 }}>
-                {movieData.person.filmConnection?.films.map((film: Film) => (
-                  <li key={film.title}>{film.title}</li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      )}
+      <Table columns={columns} dataSource={dataSource} pagination={false} />
     </Modal>
   );
 };
