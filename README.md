@@ -1,46 +1,32 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
+# Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+## `npm i`
+Install all the necessary packages for the project.
 
+## `npm run generate`
+Execute code generation, utilizing GraphQL Codegen. This command generates type-safe hooks for Apollo Client, ensuring robust type safety throughout the project. It leverages GraphQL schema and queries to automatically generate TypeScript types and utilities, optimizing developer productivity and code reliability.
+
+## `npm start`
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
+## `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
-
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<img width="1511" alt="Screenshot 2024-03-28 at 13 47 20" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/bc1fb765-8358-4964-b8f4-2d65dcb23128">
 
-### `npm run eject`
+<img width="1510" alt="Screenshot 2024-03-28 at 13 49 04" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/85ecfd22-0828-4634-8d77-4d7fda2d3992">
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<img width="1508" alt="Screenshot 2024-03-28 at 13 47 59" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/9a63a795-6a25-44cf-a60d-94a83971039f">
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<img width="1503" alt="Screenshot 2024-03-28 at 23 51 59" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/472158cc-b41c-4d12-8fd5-d76d9b71ea01">
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
