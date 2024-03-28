@@ -19,6 +19,12 @@ You will also see any lint errors in the console.
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
-
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
+
+<img width="1511" alt="Screenshot 2024-03-28 at 13 47 20" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/bc1fb765-8358-4964-b8f4-2d65dcb23128">
+
+<img width="1510" alt="Screenshot 2024-03-28 at 13 49 04" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/85ecfd22-0828-4634-8d77-4d7fda2d3992">
+
+<img width="1508" alt="Screenshot 2024-03-28 at 13 47 59" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/9a63a795-6a25-44cf-a60d-94a83971039f">
+
