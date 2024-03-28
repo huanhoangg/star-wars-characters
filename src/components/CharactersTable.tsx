@@ -1,38 +1,19 @@
-import { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
-import { Table, Button, Modal } from "antd";
-import { StarFilled, StarOutlined } from "@ant-design/icons";
-import { client } from "../index";
-import { Query } from "../gql/graphql";
-import useFavoriteCharacters from "./useFavoriteCharacters";
+import React, { useState, useEffect } from "react";
+import { Table, Space } from "antd";
+import { StarFilled } from "@ant-design/icons";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { ALL_CHARACTERS, CHARACTER_MOVIES } from "../graphql/queries";
+import useFavoriteCharacters from "./useFavoriteCharacters";
+import generateColumns from "./generateColumns";
+import CharacterModal from "./CharacterModal";
+import { Character } from "./generateColumns";
+import CustomButton from "./CustomButton";
 
 const PAGE_SIZE = 10;
 
-interface Character {
-  name: string;
-  height: number;
-  mass: number;
-  species: {
-    name: string;
-  };
-  gender: string;
-  eyeColor: string;
-  homeworld: {
-    name: string;
-  };
-  id: string;
-  filmConnection: {
-    films: [
-      {
-        title: string;
-      }
-    ];
-  };
-}
-
 const CharactersTable = () => {
   const [pagination, setPagination] = useState({
+    hideOnSinglePage: true,
     current: 1,
     pageSize: PAGE_SIZE,
     total: 0,
@@ -46,14 +27,12 @@ const CharactersTable = () => {
   const [isFiltered, setIsFiltered] = useState(false);
   const [isInFavoriteMode, setIsInFavoriteMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
-    null
-  );
+  const [selectedCharacter, setSelectedCharacter] = useState<any | null>(null);
 
   const [fetchMovies, { loading: movieLoading, data: movieData }] =
-    useLazyQuery<Query>(CHARACTER_MOVIES);
+    useLazyQuery(CHARACTER_MOVIES);
 
-  const { loading, error, data, fetchMore } = useQuery<Query>(ALL_CHARACTERS, {
+  const { loading, error, data, fetchMore } = useQuery(ALL_CHARACTERS, {
     variables: {
       first: PAGE_SIZE,
       after: null,
@@ -61,7 +40,6 @@ const CharactersTable = () => {
     },
     notifyOnNetworkStatusChange: true,
     fetchPolicy: "cache-first",
-    client: client,
   });
 
   const handleRemoveAllFavorites = () => {
@@ -123,7 +101,6 @@ const CharactersTable = () => {
         before: before,
       },
       updateQuery: (prev: any, { fetchMoreResult }: any) => {
-        console.log(fetchMoreResult);
         if (!fetchMoreResult) return prev;
         return {
           allPeople: {
@@ -140,116 +117,6 @@ const CharactersTable = () => {
     }));
   };
 
-  function renderValue(value: any) {
-    return value !== null && value !== undefined ? value : "-";
-  }
-
-  function generateColumns(data: any) {
-    return [
-      {
-        title: "Favorite",
-        dataIndex: "id",
-        key: "favorite",
-        render: (id: string, record: any) => {
-          const isFavorite = record.favoriteCharacters.some(
-            (char: any) => char.id === id
-          );
-          return isFavorite ? (
-            <StarFilled
-              style={{ color: "gold", cursor: "pointer" }}
-              onClick={() => toggleFavorite(record)}
-            />
-          ) : (
-            <StarOutlined
-              style={{ color: "black", cursor: "pointer" }}
-              onClick={() => toggleFavorite(record)}
-            />
-          );
-        },
-      },
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        render: (text: string, record: any) => (
-          <Button type="link" onClick={() => handleNameClick(record)}>
-            {renderValue(text)}
-          </Button>
-        ),
-      },
-      {
-        title: "Species",
-        dataIndex: "species",
-        key: "species",
-        render: (species: any) => renderValue(species?.name),
-        filters: data?.allPeople?.people
-          ?.map((person: any) => person.species?.name)
-          .filter(
-            (species: string, index: number, self: string[]) =>
-              self.indexOf(species) === index
-          )
-          .map((species: string) => ({
-            text: renderValue(species),
-            value: species !== null && species !== undefined ? species : "-",
-          })),
-        onFilter: (value: any, record: any) =>
-          record.species?.name === value ||
-          (record.species?.name === undefined && value === "-"),
-      },
-      {
-        title: "Gender",
-        dataIndex: "gender",
-        key: "gender",
-        render: (text: string) => renderValue(text),
-        filters: data?.allPeople?.people
-          ?.map((person: any) => person.gender)
-          .filter(
-            (gender: string, index: number, self: string[]) =>
-              self.indexOf(gender) === index
-          )
-          .map((gender: string) => ({ text: gender, value: gender })),
-        onFilter: (value: any, record: any) => record.gender === value,
-        filterMultiple: false,
-      },
-      {
-        title: "Height (cm)",
-        dataIndex: "height",
-        key: "height",
-        render: (text: number) => renderValue(text),
-      },
-      {
-        title: "Weight (kg)",
-        dataIndex: "mass",
-        key: "mass",
-        render: (text: number) => renderValue(text),
-      },
-      {
-        title: "Eye color",
-        dataIndex: "eyeColor",
-        key: "eyeColor",
-        render: (text: string) => renderValue(text),
-        filters: data?.allPeople?.people
-          ?.map((person: any) => person.eyeColor)
-          .filter(
-            (eyeColor: string, index: number, self: string[]) =>
-              self.indexOf(eyeColor) === index
-          )
-          .map((eyeColor: string) => ({
-            text: renderValue(eyeColor),
-            value: eyeColor,
-          })),
-        onFilter: (value: any, record: any) =>
-          renderValue(record.eyeColor) === value,
-      },
-      {
-        title: "Home planet",
-        dataIndex: "homeworld",
-        key: "homeworld",
-        render: (homeworld: any) => renderValue(homeworld?.name),
-      },
-    ];
-  }
-
   const handleNameClick = async (record: any) => {
     setSelectedCharacter(record);
     setModalVisible(true);
@@ -264,25 +131,25 @@ const CharactersTable = () => {
   if (error) return <p>Whoops... Something is wrong!</p>;
 
   return (
-    <>
-      <Button
-        type={isInFavoriteMode ? "primary" : "default"}
-        onClick={() => setIsInFavoriteMode((prev) => !prev)}
-        icon={isInFavoriteMode ? <StarFilled /> : <StarOutlined />}
+    <div style={{ margin: 8 }}>
+      <Space
         style={{
-          backgroundColor: isInFavoriteMode ? "yellow" : "black",
-          color: isInFavoriteMode ? "black" : "yellow",
+          marginBottom: 16,
+          marginTop: 16,
         }}
       >
-        {isInFavoriteMode ? "Show All Characters" : "Favorites Only"}
-      </Button>
-      <Button
-        type="default"
-        onClick={handleRemoveAllFavorites}
-        style={{ marginLeft: 16 }}
-      >
-        Remove All Favorites
-      </Button>
+        <CustomButton
+          onClick={() => setIsInFavoriteMode((prev) => !prev)}
+          isInFavoriteMode={isInFavoriteMode}
+          label={isInFavoriteMode ? "Show All Characters" : "Favorites Only"}
+          icon={isInFavoriteMode ? <StarFilled /> : <StarFilled />}
+        />
+        <CustomButton
+          onClick={handleRemoveAllFavorites}
+          isInFavoriteMode={isInFavoriteMode}
+          label="Remove All Favorites"
+        />
+      </Space>
       <Table
         dataSource={
           isInFavoriteMode
@@ -292,53 +159,26 @@ const CharactersTable = () => {
                 toggleFavorite,
               }))
             : data?.allPeople?.people
-            ? data.allPeople.people.map((person) => ({
+            ? data.allPeople.people.map((person: Character) => ({
                 ...person,
                 favoriteCharacters,
                 toggleFavorite,
               }))
             : []
         }
-        columns={generateColumns(data)}
-        pagination={pagination}
+        columns={generateColumns({ data, handleNameClick })}
+        pagination={{ ...pagination, position: ["bottomCenter"] }}
         onChange={handleTableChange}
         loading={loading}
         rowKey="id"
       />
-      <Modal
-        title="Character Details"
-        // Only open modal when movie is fully fetched and loaded
+      <CharacterModal
         open={modalVisible && !movieLoading}
-        onCancel={handleCloseModal}
-        footer={[
-          <Button key="close" onClick={handleCloseModal}>
-            Close
-          </Button>,
-        ]}
-      >
-        {selectedCharacter && (
-          <div>
-            <p>Name: {selectedCharacter.name}</p>
-            <p>Species: {renderValue(selectedCharacter.species?.name)}</p>
-            <p>Gender: {renderValue(selectedCharacter.gender)}</p>
-            <p>Height (cm): {renderValue(selectedCharacter.height)}</p>
-            <p>Weight (kg): {renderValue(selectedCharacter.mass)}</p>
-            <p>Eye Color: {renderValue(selectedCharacter.eyeColor)}</p>
-            <p>Home Planet: {renderValue(selectedCharacter.homeworld?.name)}</p>
-            {movieData && movieData.person && (
-              <>
-                <p>Movies:</p>
-                <ul>
-                  {movieData.person.filmConnection!.films!.map((film: any) => (
-                    <li key={film.title}>{film.title}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-        )}
-      </Modal>
-    </>
+        character={selectedCharacter}
+        movieData={movieData}
+        onClose={handleCloseModal}
+      />
+    </div>
   );
 };
 

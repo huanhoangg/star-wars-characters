@@ -1,9 +1,10 @@
 import CharactersTable from "./components/CharactersTable";
+import PageLogo from "./components/PageLogo";
 
 const App = () => {
   return (
     <div className="App">
-      <h1>Star Wars Characters</h1>
+      <PageLogo />
       <CharactersTable />
     </div>
   );
