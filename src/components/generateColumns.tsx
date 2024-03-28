@@ -1,36 +1,5 @@
 import { StarFilled, StarOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-interface PageInfo {
-  startCursor: string;
-  endCursor: string;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-interface AllPeopleData {
-  allPeople: {
-    pageInfo: PageInfo;
-    totalCount: number;
-    people: Character[];
-  };
-}
-interface Homeworld {
-  name: string;
-}
-
-interface Species {
-  name: string;
-}
-export interface Character {
-  name: string;
-  height: number;
-  mass: number;
-  species: Species;
-  gender: string;
-  eyeColor: string;
-  homeworld: Homeworld;
-  id: string;
-}
 interface Props {
   data: AllPeopleData;
   handleNameClick: (record: any) => void;
@@ -41,7 +10,6 @@ export function renderValue(value: string | number | null | undefined) {
 }
 
 function generateColumns({ data, handleNameClick }: Props) {
-  console.log(data);
   return [
     {
       title: "Favorite",
@@ -50,7 +18,6 @@ function generateColumns({ data, handleNameClick }: Props) {
       align: "center" as const,
       width: "5%",
       render: (id: string, record: any) => {
-        console.log(record);
         const isFavorite = record.favoriteCharacters.some(
           (char: any) => char.id === id
         );

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button } from "antd";
-import { Character, renderValue } from "./generateColumns";
+import { renderValue } from "./generateColumns";
 
 interface Props {
   open: boolean;
@@ -9,25 +9,12 @@ interface Props {
   onClose: () => void;
 }
 
-interface Film {
-  title: string;
-}
-
-interface Movie {
-  person: {
-    filmConnection: {
-      films: Film[];
-    };
-  };
-}
-
 const CharacterModal: React.FC<Props> = ({
   open,
   character,
   movieData,
   onClose,
 }) => {
-  console.log(character);
   return (
     <Modal
       title="Character Details"
