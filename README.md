@@ -28,3 +28,4 @@ Your app is ready to be deployed!
 
 <img width="1508" alt="Screenshot 2024-03-28 at 13 47 59" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/9a63a795-6a25-44cf-a60d-94a83971039f">
 
+<img width="1507" alt="Screenshot 2024-03-28 at 14 04 12" src="https://github.com/huanhoangg/star-wars-characters/assets/62900930/3c270ebd-3525-4bcc-9a83-c62ed310dc2e">
