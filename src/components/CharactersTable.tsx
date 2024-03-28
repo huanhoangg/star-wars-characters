@@ -6,7 +6,6 @@ import { ALL_CHARACTERS, CHARACTER_MOVIES } from "../graphql/queries";
 import useFavoriteCharacters from "./useFavoriteCharacters";
 import generateColumns from "./generateColumns";
 import CharacterModal from "./CharacterModal";
-import { Character } from "./generateColumns";
 import CustomButton from "./CustomButton";
 
 const PAGE_SIZE = 10;
