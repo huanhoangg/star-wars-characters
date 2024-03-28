@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { Button } from "antd";
-import { StarFilled } from "@ant-design/icons";
 
 interface CustomButtonProps {
   onClick: () => void;

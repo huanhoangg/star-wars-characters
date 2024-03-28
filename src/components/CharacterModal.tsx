@@ -1,11 +1,24 @@
 import React from "react";
 import { Modal, Button } from "antd";
+import { Character, renderValue } from "./generateColumns";
 
 interface Props {
   open: boolean;
-  character: any;
-  movieData: any;
+  character: Character;
+  movieData: Movie;
   onClose: () => void;
+}
+
+interface Film {
+  title: string;
+}
+
+interface Movie {
+  person: {
+    filmConnection: {
+      films: Film[];
+    };
+  };
 }
 
 const CharacterModal: React.FC<Props> = ({
@@ -14,6 +27,7 @@ const CharacterModal: React.FC<Props> = ({
   movieData,
   onClose,
 }) => {
+  console.log(character);
   return (
     <Modal
       title="Character Details"
@@ -27,18 +41,30 @@ const CharacterModal: React.FC<Props> = ({
     >
       {character && (
         <div>
-          <p>Name: {character.name}</p>
-          <p>Species: {character.species?.name}</p>
-          <p>Gender: {character.gender}</p>
-          <p>Height (cm): {character.height}</p>
-          <p>Weight (kg): {character.mass}</p>
-          <p>Eye Color: {character.eyeColor}</p>
-          <p>Home Planet: {character.homeworld?.name}</p>
+          <p className="modal-paragraph">Name: {renderValue(character.name)}</p>
+          <p className="modal-paragraph">
+            Species: {renderValue(character.species?.name)}
+          </p>
+          <p className="modal-paragraph">
+            Gender: {renderValue(character.gender)}
+          </p>
+          <p className="modal-paragraph">
+            Height (cm): {renderValue(character.height)}
+          </p>
+          <p className="modal-paragraph">
+            Weight (kg): {renderValue(character.mass)}
+          </p>
+          <p className="modal-paragraph">
+            Eye color: {renderValue(character.eyeColor)}
+          </p>
+          <p className="modal-paragraph">
+            Home planet: {renderValue(character.homeworld?.name)}
+          </p>
           {movieData && movieData.person && (
             <>
-              <p>Movies:</p>
-              <ul>
-                {movieData.person.filmConnection?.films.map((film: any) => (
+              <p className="modal-paragraph">Movies:</p>
+              <ul style={{ margin: 0 }}>
+                {movieData.person.filmConnection?.films.map((film: Film) => (
                   <li key={film.title}>{film.title}</li>
                 ))}
               </ul>

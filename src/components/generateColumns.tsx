@@ -1,31 +1,47 @@
 import { StarFilled, StarOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+interface PageInfo {
+  startCursor: string;
+  endCursor: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
 
+interface AllPeopleData {
+  allPeople: {
+    pageInfo: PageInfo;
+    totalCount: number;
+    people: Character[];
+  };
+}
+interface Homeworld {
+  name: string;
+}
+
+interface Species {
+  name: string;
+}
 export interface Character {
   name: string;
   height: number;
   mass: number;
-  species: {
-    name: string;
-  };
+  species: Species;
   gender: string;
   eyeColor: string;
-  homeworld: {
-    name: string;
-  };
+  homeworld: Homeworld;
   id: string;
 }
-
 interface Props {
-  data: any;
+  data: AllPeopleData;
   handleNameClick: (record: any) => void;
 }
 
-function renderValue(value: any) {
+export function renderValue(value: string | number | null | undefined) {
   return value !== null && value !== undefined ? value : "-";
 }
 
 function generateColumns({ data, handleNameClick }: Props) {
+  console.log(data);
   return [
     {
       title: "Favorite",
@@ -34,6 +50,7 @@ function generateColumns({ data, handleNameClick }: Props) {
       align: "center" as const,
       width: "5%",
       render: (id: string, record: any) => {
+        console.log(record);
         const isFavorite = record.favoriteCharacters.some(
           (char: any) => char.id === id
         );
@@ -68,9 +85,9 @@ function generateColumns({ data, handleNameClick }: Props) {
       key: "species",
       width: "15%",
       align: "center" as const,
-      render: (species: any) => renderValue(species?.name),
+      render: (species: Species) => renderValue(species?.name),
       filters: data?.allPeople?.people
-        ?.map((person: any) => person.species?.name)
+        ?.map((person: Character) => person.species?.name)
         .filter(
           (species: string, index: number, self: string[]) =>
             self.indexOf(species) === index
@@ -91,7 +108,7 @@ function generateColumns({ data, handleNameClick }: Props) {
       align: "center" as const,
       render: (text: string) => renderValue(text),
       filters: data?.allPeople?.people
-        ?.map((person: any) => person.gender)
+        ?.map((person: Character) => person.gender)
         .filter(
           (gender: string, index: number, self: string[]) =>
             self.indexOf(gender) === index
@@ -126,7 +143,7 @@ function generateColumns({ data, handleNameClick }: Props) {
       align: "center" as const,
       render: (text: string) => renderValue(text),
       filters: data?.allPeople?.people
-        ?.map((person: any) => person.eyeColor)
+        ?.map((person: Character) => person.eyeColor)
         .filter(
           (eyeColor: string, index: number, self: string[]) =>
             self.indexOf(eyeColor) === index
@@ -144,7 +161,7 @@ function generateColumns({ data, handleNameClick }: Props) {
       key: "homeworld",
       width: "15%",
       align: "center" as const,
-      render: (homeworld: any) => renderValue(homeworld?.name),
+      render: (homeworld: Homeworld) => renderValue(homeworld?.name),
     },
   ];
 }
